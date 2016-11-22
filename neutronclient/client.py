@@ -75,6 +75,7 @@ class HTTPClient(object):
         self.endpoint_url = endpoint_url
         self.auth_strategy = auth_strategy
         self.log_credentials = log_credentials
+        self.client_ip = kwargs.get('client_ip')
         if insecure:
             self.verify_cert = False
         else:
@@ -134,6 +135,7 @@ class HTTPClient(object):
         if body:
             headers.setdefault('Content-Type', content_type)
 
+        headers['X-Forwarded-For'] = self.client_ip
         headers['User-Agent'] = self.USER_AGENT
 
         resp = requests.request(
@@ -389,4 +391,5 @@ def construct_http_client(username=None,
                           service_type=service_type,
                           ca_cert=ca_cert,
                           log_credentials=log_credentials,
-                          auth_strategy=auth_strategy)
+                          auth_strategy=auth_strategy,
+                          **kwargs)
